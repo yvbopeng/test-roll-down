@@ -442,7 +442,7 @@ const config = defineConfig({
     // Automatically handle OG images for all markdown files.
     if (!pageData.frontmatter.image && pageData.relativePath !== 'index.md') {
       await addOgImage(pageData, ctx, {
-        domain: 'https://rolldown.rs',
+        domain: 'https://yvbopeng.github.io',
         maxTitleSizePerLine: 16,
         ogTemplate: prepareOgTemplateWithFont(),
       });
