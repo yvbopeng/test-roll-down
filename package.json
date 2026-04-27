@@ -41,8 +41,10 @@
       "@parcel/watcher",
       "esbuild",
       "oxc-resolver",
+      "playwright-chromium",
       "sharp",
-      "tree-sitter"
+      "tree-sitter",
+      "vue-demi"
     ]
   }
 }

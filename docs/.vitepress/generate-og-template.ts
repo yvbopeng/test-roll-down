@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 
 const DIR = fileURLToPath(new URL('.', import.meta.url));
 const TEMPLATE_PATH = path.join(DIR, 'og-template.svg');
-const FONT_PATH = path.join(DIR, 'fonts', 'Inter-VariableFont_opsz,wght.ttf');
+const FONT_PATH = path.join(DIR, 'fonts', 'Inter-font.ttf');
 const CACHE_DIR = path.join(DIR, 'cache');
 const OUTPUT_PATH = path.join(CACHE_DIR, 'og-template.generated.svg');
 
