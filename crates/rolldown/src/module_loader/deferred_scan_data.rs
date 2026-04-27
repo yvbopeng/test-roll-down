@@ -1,0 +1,50 @@
+use rolldown_common::ModuleId;
+use rolldown_common::side_effects::{DeterminedSideEffects, HookSideEffects};
+use rolldown_error::BuildResult;
+use rustc_hash::FxHashMap;
+
+use crate::ecmascript::ecma_module_view_factory::normalize_side_effects;
+use crate::module_loader::module_loader::VisitState;
+use crate::{SharedOptions, stages::scan_stage::NormalizedScanStageOutput};
+
+pub async fn defer_sync_scan_data(
+  options: &SharedOptions,
+  module_id_to_idx: &FxHashMap<ModuleId, VisitState>,
+  scan_stage_output: &mut NormalizedScanStageOutput,
+) -> BuildResult<()> {
+  let Some(ref func) = options.defer_sync_scan_data else {
+    return Ok(());
+  };
+
+  for data in func.exec().await? {
+    let source_id = ModuleId::new(data.id.as_str());
+    let Some(state) = module_id_to_idx.get(&source_id) else {
+      continue;
+    };
+    let module_idx = state.idx();
+    let Some(module) = scan_stage_output.module_table.modules.get_mut(module_idx) else {
+      continue;
+    };
+    let Some(normal) = module.as_normal_mut() else {
+      continue;
+    };
+    // TODO: Document this and recommend user to return `moduleSideEffects` in hook return
+    // value rather than mutate the `ModuleInfo`
+    normal.ecma_view.side_effects = match data.side_effects {
+      Some(HookSideEffects::False) => DeterminedSideEffects::UserDefined(false),
+      Some(HookSideEffects::NoTreeshake) => DeterminedSideEffects::NoTreeshake,
+      _ => {
+        // for Some(HookSideEffects::True) and None,
+        // we need to re analyze the side effects
+        normalize_side_effects(
+          options,
+          &normal.originative_resolved_id,
+          Some(&normal.stmt_infos),
+          data.side_effects,
+        )
+        .await?
+      }
+    };
+  }
+  Ok(())
+}
