@@ -227,6 +227,7 @@ const sidebarForResources: DefaultTheme.SidebarItem[] = [
 const config = defineConfig({
   title: 'Rolldown',
   description: 'Fast Rust-based bundler for JavaScript with Rollup-compatible API',
+  base: '/test-roll-down/',
   lastUpdated: true,
   cleanUrls: true,
   sitemap: {
