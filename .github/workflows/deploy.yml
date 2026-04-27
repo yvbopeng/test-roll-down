@@ -33,6 +33,9 @@ jobs:
       - name: 安装依赖
         run: pnpm install --frozen-lockfile
 
+      - name: Build @rolldown/pluginutils
+        run: pnpm run --filter '@rolldown/pluginutils' build
+
       - name: 构建文档
         run: pnpm run docs:build
 
